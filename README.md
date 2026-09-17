@@ -1,6 +1,6 @@
 # Team 2 Year 2 Winter Decision Tool
 
-A dependency-free browser application for comparing winter strategies in the Pork and Garlic Ice Cream classroom game. Deploy the repository through Vercel using the Other framework preset, no build command, and the root output directory.
+A dependency-free browser application for comparing winter strategies in the Pork and Garlic Ice Cream classroom game. Deploy the repository through Vercel using the Other framework preset, `node build.js` as build command, and `dist` as output directory.
 
 ## Source audit
 
@@ -25,4 +25,4 @@ Inputs and selection are saved to this browser's local storage. No server databa
 
 ## Verification
 
-Run `npm test` (or `node model.test.js`) for accounting, lower sales, changed inputs, carried losses, borrowing and funding timing, existing loans, multiple premises, rounding residuals, idle/expired machines, missing data, validation and storage. Run `npm start` for a local preview at http://127.0.0.1:4173. Production is a static Vercel deployment of index.html, app.js, model.js and style.css.
+Run `npm test` (or `node model.test.js`) for accounting, lower sales, changed inputs, carried losses, borrowing and funding timing, existing loans, multiple premises, rounding residuals, idle/expired machines, missing data, validation and storage. Run `npm start` for a local preview at http://127.0.0.1:4173. Run `npm run build` to reproduce the single-file `dist/index.html` bundle. The live site is a Vercel Drop to Deploy upload of that bundle. The GitHub repository holds the source and tests; automatic Git-based deployments are not connected. Future Git imports can use the included vercel.json.

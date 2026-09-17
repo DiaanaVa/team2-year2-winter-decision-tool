@@ -1,1 +1,1 @@
-{"name":"team2-winter-decision-tool","version":"1.0.0","private":true,"type":"module","scripts":{"test":"node model.test.js","start":"node server.js"}}
+{"name":"team2-winter-decision-tool","version":"1.0.0","private":true,"type":"module","scripts":{"test":"node model.test.js","build":"node build.js","start":"node server.js"}}

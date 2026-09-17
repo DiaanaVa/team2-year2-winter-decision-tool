@@ -38,14 +38,14 @@ export function calculate(start,rules,option,actual=option.actual){
  integer(option.request,'Sales request');integer(actual,'Actual allocation');
  if(valid(option.request)&&valid(rules.block)&&option.request%rules.block!==0)errors.push('Sales request must use '+rules.block.toLocaleString()+'-unit blocks');
  if(valid(actual)&&valid(rules.block)&&actual%rules.block!==0)errors.push('Actual allocation must use '+rules.block.toLocaleString()+'-unit blocks');
- if(option.milk<rules.minMilk)errors.push('Milk purchase is below the seasonal minimum');
- if(option.market<rules.minMarket)errors.push('Market investment is below the seasonal minimum');
+ if(valid(option.milk)&&valid(rules.minMilk)&&option.milk<rules.minMilk)errors.push('Milk purchase is below the seasonal minimum');
+ if(valid(option.market)&&valid(rules.minMarket)&&option.market<rules.minMarket)errors.push('Market investment is below the seasonal minimum');
  const allMachines=start.machines.map(m=>({...m,new:false,premise:option.installations[m.id]??''})).concat(option.purchases.map(m=>({...m,new:true,life:rules.newLife,depreciation:valid(m.cost)&&valid(rules.newLife)?m.cost/rules.newLife:null,accumulated:0})));
  const ids=allMachines.map(m=>m.id);if(new Set(ids).size!==ids.length)errors.push('Machine copy IDs must be unique');
  for(const m of allMachines){for(const key of ['cost','capacity','maintenance','depreciation','life','accumulated'])need(m[key],m.id+' '+key);integer(m.life,m.id+' remaining life');integer(m.capacity,m.id+' capacity');if(m.accumulated>m.cost)errors.push(m.id+' accumulated depreciation exceeds original cost');if(m.life===0&&m.premise)errors.push(m.id+' is expired and cannot operate');if(valid(m.life)&&valid(m.depreciation)&&valid(m.cost)&&valid(m.accumulated)&&Math.abs(m.cost-m.accumulated-m.life*m.depreciation)>1)errors.push(m.id+' remaining life and depreciation do not reconcile to book value');}
  const pids=option.premises.map(p=>p.id);if(new Set(pids).size!==pids.length)errors.push('Premise IDs must be unique');
  for(const m of allMachines)if(m.premise&&!pids.includes(m.premise))errors.push(m.id+' is installed in an unrented premise');
- for(const p of option.premises){for(const key of ['rent','rate','slots','production'])need(p[key],p.id+' '+key);integer(p.slots,p.id+' slots');integer(p.production,p.id+' production');const installed=allMachines.filter(m=>m.premise===p.id);if(installed.length>p.slots)errors.push(p.id+' has too many installed machines');if(p.production>sum(installed.filter(m=>m.life>0).map(m=>m.capacity)))errors.push(p.id+' production exceeds working machine capacity');}
+ for(const p of option.premises){for(const key of ['rent','rate','slots','production'])need(p[key],p.id+' '+key);integer(p.slots,p.id+' slots');integer(p.production,p.id+' production');const installed=allMachines.filter(m=>m.premise===p.id);if(valid(p.slots)&&installed.length>p.slots)errors.push(p.id+' has too many installed machines');if(valid(p.production)&&installed.every(m=>valid(m.life)&&valid(m.capacity))&&p.production>sum(installed.filter(m=>m.life>0).map(m=>m.capacity)))errors.push(p.id+' production exceeds working machine capacity');}
  const produced=option.premises.every(p=>valid(p.production))?sum(option.premises.map(p=>p.production)):null;
  if(valid(produced)&&produced>(option.openingMilk+option.milk)*rules.yield)errors.push('Insufficient milk for committed production');
  if(valid(produced)&&option.request>produced)errors.push('Sales requested exceed production');
